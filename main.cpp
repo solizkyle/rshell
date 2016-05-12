@@ -1,6 +1,12 @@
 #include <iostream>
-
+#include <string>
 using namespace std;
+
+//TODO:
+//  Create parse function
+//  Add execute functionality to both classes
+//  Write loop in main function
+
 
 class Shell{
     virtual bool execute() = 0;
