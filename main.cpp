@@ -124,26 +124,27 @@ void parse(string commandLine){
             //reset i
             i = 0;
             cout << "top: " << top << endl;
-            // if(top = NULL){
+            //issue where it never enteres the first if statement
+            if(top = NULL){
                 cout << "top is empty" << endl;
                 Shell* connect = new Semi;
                 top = connect;
                 connect->first = stringToCommand(temp);
-            // }
-            // else{
-            //     cout << "top is not empty" << endl;
-            //     Shell* connect = new Semi;
-            //     connect->first = top;
-            //     top->second = stringToCommand(temp);
-            //     top = connect;
-            // }
+            }
+            else{
+                cout << "top is not empty" << endl;
+                Shell* connect = new Semi;
+                connect->first = top;
+                top->second = stringToCommand(temp);
+                top = connect;
+            }
         }
         else if(commandLine.at(i) == '|'){
             if(commandLine.at(i + 1) == '|'){
                 //make substr
                 temp = commandLine.substr(0, i);
                 //delete what we took
-                commandLine.erase(0, i);
+                commandLine.erase(0, i);    //see below for deleting both connectors
                 //reset i
                 i = 0;
                 if(top = NULL){
@@ -164,7 +165,7 @@ void parse(string commandLine){
                 //make substr
                 temp = commandLine.substr(0, i);
                 //delete what we took
-                commandLine.erase(0, i);    //need to change it so that it deletes both connectors
+                commandLine.erase(0, i);    //need to change it so that it deletes both connectors  
                 //reset i
                 i = 0;
                 if(top = NULL){
