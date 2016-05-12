@@ -13,39 +13,64 @@ using namespace std;
 
 class Shell{
     public:
+        Shell(){};
         virtual bool execute() = 0;
 };
 
 class Connector : public Shell{
-    Shell* first;
-    Shell* second;
-    virtual bool execute() = 0;
+    public: 
+        Shell* first;
+        Shell* second;
+        Connector() : Shell(){};
+        Connector(Shell* f, Shell* r) : first(f), second(s){};
+        virtual bool execute() = 0; // for compiler
 };
 
 class Bars : public Connector{
-    bool execute(){
-        return true;
-    }
+    public: 
+        Bars() : Connector (){};
+        Bars(Shell* f, Shell* s) : Connector(f, s);
+        bool execute(){
+            if(!first->execute()){
+                return second->execute();
+            }
+            return ;
+        }
 };
 
 class Semi : public Connector{
-    bool execute(){
-        return true;
-    }
+    public:
+        Semi() : Connector (){};
+        Semi(Shell* f, Shell* s) : Connector(f, s);
+        bool execute(){
+            first->execute();
+            return second->execute();
+        }
 };
 
 class Amp : public Connector{
-    bool execute(){
-        return true;
-    }
+    public:
+        Amp() : Connector (){};
+        Amp(Shell* f, Shell* s) : Connector(f, s);
+        bool execute(){
+            if(first->execute()){
+                return second->execute();
+            }
+            return false; // else
+        }
 };
 
 class Command : public Shell{
-    char cmd[];
-    vector<string> args;
-    bool execute(){
-        return true;
-    }
+    public:
+        char cmd[];
+        vector<string> args;
+        
+        Command() : Shell(){};
+        Command(char c[], vector<string> a) : Shell(), cmd(c), args(a) {};
+        bool execute(){
+            cout << "executed command" << endl;
+            return true;
+        }
 };
 
 Base* stringToCommand(string cmd){
