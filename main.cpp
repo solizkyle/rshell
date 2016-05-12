@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <string>
 using namespace std;
 
@@ -32,5 +33,5 @@ class Command: public Shell{
 int main() {
 
 
-    return 0
+    return 0;
 }
