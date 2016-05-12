@@ -15,6 +15,8 @@ using namespace std;
 
 class Shell{
     public:
+        Shell* first;
+        Shell* second;
         Shell(){};
         virtual bool execute() = 0;
 };
@@ -24,14 +26,14 @@ class Connector : public Shell{
         Shell* first;
         Shell* second;
         Connector() : Shell(){};
-        Connector(Shell* f, Shell* r) : first(f), second(s){};
+        Connector(Shell* f, Shell* s) : first(f), second(s){};
         virtual bool execute() = 0; // for compiler
 };
 
 class Bars : public Connector{
     public: 
         Bars() : Connector (){};
-        Bars(Shell* f, Shell* s) : Connector(f, s);
+        Bars(Shell* f, Shell* s) : Connector(f, s){};
         bool execute(){
             if(!first->execute()){
                 return second->execute();
@@ -43,7 +45,7 @@ class Bars : public Connector{
 class Semi : public Connector{
     public:
         Semi() : Connector (){};
-        Semi(Shell* f, Shell* s) : Connector(f, s);
+        Semi(Shell* f, Shell* s) : Connector(f, s){};
         bool execute(){
             first->execute();
             return second->execute();
@@ -53,7 +55,7 @@ class Semi : public Connector{
 class Amp : public Connector{
     public:
         Amp() : Connector (){};
-        Amp(Shell* f, Shell* s) : Connector(f, s);
+        Amp(Shell* f, Shell* s) : Connector(f, s){};
         bool execute(){
             if(first->execute()){
                 return second->execute();
@@ -121,7 +123,7 @@ void parse(string commandLine){
                 connect->first = stringToCommand(temp);
             }
             else{
-                Shell connect = new Semi;
+                Shell* connect = new Semi;
                 connect->first = top;
                 top->second = stringToCommand(temp);
                 top = connect;
@@ -149,7 +151,7 @@ void parse(string commandLine){
             }
         }
         else if(commandLine.at(i) == '&'){
-            if(commandLine.at(i + 1) == &){
+            if(commandLine.at(i + 1) == '&'){
                 //make substr
                 temp = commandLine.substr(0, i);
                 //delete what we took
