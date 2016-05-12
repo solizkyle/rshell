@@ -14,6 +14,7 @@ class Shell{
 };
 
 class Connector: public Shell{
+    //IDs: 1 = || 2 = && 3 = ;
     int ID;
     Shell* First;
     Shell* Second;
@@ -31,7 +32,11 @@ class Command: public Shell{
 };
 
 int main() {
-
-
+    string commandLine;
+    //output basic prompt
+    while(commandLine != "exit"){
+        cout << '$';
+        getline(cin, commandLine);
+    }
     return 0;
 }
