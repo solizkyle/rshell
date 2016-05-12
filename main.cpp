@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cstring>
 #include <sstream>
 using namespace std;
 
@@ -33,10 +34,20 @@ class Command: public Shell{
 };
 
 void parse(string commandLine){
-    string tempString;
-    stringstream ss;
-    ss >> tempString;
-    can you read this?
+    //cmdLine is now a C String
+    char* cmdLine = new char[commandLine.length() + 1];
+    strcpy(cmdLine, commandLine.c_str());
+    const char delim[6] = " ;&|#";
+    char* itr = strtok (cmdLine, delim);
+    while (itr != NULL){
+        cout << itr << endl;
+        itr = strtok(NULL, delim);
+    }
+    
+    // string tempString;
+    // stringstream ss;
+    // ss >> tempString;
+    
 }
 
 int main() {
