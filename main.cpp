@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <sstream>
 using namespace std;
 
 //TODO:
@@ -31,12 +32,20 @@ class Command: public Shell{
     }
 };
 
+void parse(string commandLine){
+    string tempString;
+    stringstream ss;
+    ss >> tempString;
+    
+}
+
 int main() {
     string commandLine;
     //output basic prompt
     while(commandLine != "exit"){
         cout << '$';
         getline(cin, commandLine);
+        parse(commandLine);
     }
     return 0;
 }
