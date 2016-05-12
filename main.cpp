@@ -2,6 +2,8 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include <string.h>
+#include <stdio.h>
 #include <sstream>
 using namespace std;
 
@@ -40,19 +42,42 @@ class Amp : public Connector{
 };
 
 class Command : public Shell{
-    char cmd[];
+    public:
+    const char* cmd;
     vector<string> args;
     bool execute(){
         return true;
     }
 };
 
-Base* stringToCommand(string cmd){
-    
+Shell* stringToCommand(string commandLine){
+    stringstream ss;
+    ss << commandLine;
+    // //sets up everything to use strtok
+    // char* cmdLine = new char[cmd.length() + 1];
+    // const char s[2] = " ";
+    // char *token;
+    // token = strtok(cmdLine, s);
+    //builds new command
+    Command* temp = new Command;
+    string tempString;
+    ss >> tempString;
+    temp->cmd = tempString.c_str();
+    while(ss >> tempString){
+        temp->args.push_back(tempString);
+    }
+    // if(token != NULL){
+
+    // }
+    // while(token != NULL){
+    //     temp->args.push_back(token);
+    //     token = strtok(NULL, s);
+    // }
+    return temp;
 }
 
 void parse(string commandLine){
-    char* cmdLine = new char[commandLine.length() + 1];
+
     Shell* top = NULL;
     vector<string> commands;
     vector<string> connectors;
