@@ -1,6 +1,6 @@
 CC=g++
 CC_FLAGS=
-EXEC=calculator
+EXEC=rshell
 SOURCES=$(wildcard *.cpp)
 OBJECTS=$(SOURCES:.cpp=.o)
 
