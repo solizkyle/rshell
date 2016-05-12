@@ -14,7 +14,8 @@ using namespace std;
 
 
 class Shell{
-    virtual bool execute() = 0;
+    public:
+        virtual bool execute() = 0;
 };
 
 class Connector : public Shell{
