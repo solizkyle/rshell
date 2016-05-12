@@ -109,25 +109,34 @@ void parse(string commandLine){
     vector<string> commands;
     vector<string> connectors;
     for(int i = 0; i < commandLine.size(); ++i){
+        cout << "current: " << i << endl;
         string temp;
         if(commandLine.at(i) == ';'){
+            cout << "found semi" << endl;
             //make substr
+            cout << "created substr" << endl;
             temp = commandLine.substr(0, i);
+            cout << "substr: " << temp << endl;
             //delete what we took
-            commandLine.erase(0, i);
+            cout << "erased substr from master string" << endl;
+            commandLine.erase(0, i + 1);
+            cout << "new master string: " << commandLine << endl;
             //reset i
             i = 0;
-            if(top = NULL){
+            cout << "top: " << top << endl;
+            // if(top = NULL){
+                cout << "top is empty" << endl;
                 Shell* connect = new Semi;
                 top = connect;
                 connect->first = stringToCommand(temp);
-            }
-            else{
-                Shell* connect = new Semi;
-                connect->first = top;
-                top->second = stringToCommand(temp);
-                top = connect;
-            }
+            // }
+            // else{
+            //     cout << "top is not empty" << endl;
+            //     Shell* connect = new Semi;
+            //     connect->first = top;
+            //     top->second = stringToCommand(temp);
+            //     top = connect;
+            // }
         }
         else if(commandLine.at(i) == '|'){
             if(commandLine.at(i + 1) == '|'){
@@ -155,7 +164,7 @@ void parse(string commandLine){
                 //make substr
                 temp = commandLine.substr(0, i);
                 //delete what we took
-                commandLine.erase(0, i);
+                commandLine.erase(0, i);    //need to change it so that it deletes both connectors
                 //reset i
                 i = 0;
                 if(top = NULL){
@@ -171,20 +180,29 @@ void parse(string commandLine){
                 }
             }
         }
-        else{
-            //make substr
-            temp = commandLine.substr(0, i);
-            //if top != null, top->second = stringToCommand
-            if(top == NULL){
-                top = stringToCommand(temp);
-            }
-            else{
-                top->second = stringToCommand(temp);
-            }
-            //if top == null, top = stringToCommand
-        }
+    //     else{   //this needs to get moved outside of the loop
+    //             //this gets called every i that is not a connector
+    //         cout << "no connector found!" << endl;
+    //         //make substr
+    //         temp = commandLine.substr(0, i);
+    //         //if top != null, top->second = stringToCommand
+    //         if(top == NULL){
+    //             top = stringToCommand(temp);
+    //         }
+    //         else{
+    //             top->second = stringToCommand(temp);
+    //         }
+    //         //if top == null, top = stringToCommand
+    //     }
+    // }
+    cout << "no connector found!" << endl;
+    string temp = commandLine;
+    if(top == NULL){
+        top = stringToCommand(temp);
     }
-    
+    else{
+        top->second = stringToCommand(temp);
+    }
 }
 
 int main() {
