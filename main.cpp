@@ -15,17 +15,31 @@ class Shell{
     virtual bool execute() = 0;
 };
 
-class Connector: public Shell{
-    //IDs: 1 = || 2 = && 3 = ;
-    int ID;
+class Connector : public Shell{
     Shell* First;
     Shell* Second;
+    virtual bool execute() = 0;
+};
+
+class Bars : public Connector{
     bool execute(){
         return true;
     }
 };
 
-class Command: public Shell{
+class Semi : public Connector{
+    bool execute(){
+        return true;
+    }
+};
+
+class Amp : public Connector{
+    bool execute(){
+        return true;
+    }
+};
+
+class Command : public Shell{
     char cmd[];
     vector<string> args;
     bool execute(){
@@ -34,19 +48,30 @@ class Command: public Shell{
 };
 
 void parse(string commandLine){
-    //cmdLine is now a C String
     char* cmdLine = new char[commandLine.length() + 1];
-    strcpy(cmdLine, commandLine.c_str());
-    const char delim[6] = " ;&|#";
-    char* itr = strtok (cmdLine, delim);
-    while (itr != NULL){
-        cout << itr << endl;
-        itr = strtok(NULL, delim);
+
+    vector<string> commands;
+    vector<string> connectors;
+    for(int i = 0; i < commandLine.size(); ++i){
+        if(commandLine.at(i) == ';'){
+            //make substr
+            //delete what we took
+            //reset i
+        }
+        else if(commandLine.at(i) == '|'){
+            if(commandLine.at(i + 1) == '|'){
+                //make substr
+            }
+        }
+        else if(commandLine.at(i) == '&'){
+            if(commandLine.at(i + 1) == &){
+                //make substr
+            }
+        }
+        else{
+            //make substr
+        }
     }
-    
-    // string tempString;
-    // stringstream ss;
-    // ss >> tempString;
     
 }
 
