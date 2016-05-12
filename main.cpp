@@ -36,7 +36,7 @@ class Bars : public Connector{
             if(!first->execute()){
                 return second->execute();
             }
-            return ;
+            return true;
         }
 };
 
