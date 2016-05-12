@@ -24,8 +24,6 @@ class Command: public Shell{
 };
 
 int main() {
-    test!
-    
 
     return 0
 }
