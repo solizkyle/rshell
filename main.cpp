@@ -16,8 +16,8 @@ class Shell{
 };
 
 class Connector : public Shell{
-    Shell* First;
-    Shell* Second;
+    Shell* first;
+    Shell* second;
     virtual bool execute() = 0;
 };
 
@@ -47,29 +47,89 @@ class Command : public Shell{
     }
 };
 
+Base* stringToCommand(string cmd){
+    
+}
+
 void parse(string commandLine){
     char* cmdLine = new char[commandLine.length() + 1];
-
+    Shell* top = NULL;
     vector<string> commands;
     vector<string> connectors;
     for(int i = 0; i < commandLine.size(); ++i){
+        string temp;
         if(commandLine.at(i) == ';'){
             //make substr
+            temp = commandLine.substr(0, i);
             //delete what we took
+            commandLine.erase(0, i);
             //reset i
+            i = 0;
+            if(top = NULL){
+                Shell* connect = new Semi;
+                top = connect;
+                connect->first = stringToCommand(temp);
+            }
+            else{
+                Shell connect = new Semi;
+                connect->first = top;
+                top->second = stringToCommand(temp);
+                top = connect;
+            }
         }
         else if(commandLine.at(i) == '|'){
             if(commandLine.at(i + 1) == '|'){
                 //make substr
+                temp = commandLine.substr(0, i);
+                //delete what we took
+                commandLine.erase(0, i);
+                //reset i
+                i = 0;
+                if(top = NULL){
+                    Shell* connect = new Bars;
+                    top = connect;
+                    connect->first = stringToCommand(temp);
+                }
+                else{
+                    Shell* connect = new Bars;
+                    connect->first = top;
+                    top->second = stringToCommand(temp);
+                    top = connect;
+                }
             }
         }
         else if(commandLine.at(i) == '&'){
             if(commandLine.at(i + 1) == &){
                 //make substr
+                temp = commandLine.substr(0, i);
+                //delete what we took
+                commandLine.erase(0, i);
+                //reset i
+                i = 0;
+                if(top = NULL){
+                    Shell* connect = new Amp;
+                    top = connect;
+                    connect->first = stringToCommand(temp);
+                }
+                else{
+                    Shell* connect = new Amp;
+                    connect->first = top;
+                    top->second = stringToCommand(temp);
+                    top = connect;
+                }
             }
         }
         else{
             //make substr
+            temp = commandLine.substr(0, i);
+            //if top != null, top->second = stringToCommand
+            if(top == NULL){
+                top = stringToCommand(temp);
+            }
+            else{
+                top->second = stringToCommand(temp);
+            }
+            //if top == null, top = stringToCommand
         }
     }
     
@@ -77,7 +137,6 @@ void parse(string commandLine){
 
 int main() {
     string commandLine;
-    //output basic prompt
     while(commandLine != "exit"){
         cout << '$';
         getline(cin, commandLine);
