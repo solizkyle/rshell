@@ -110,7 +110,7 @@ Shell* stringToCommand(string commandLine){
 void parse(string commandLine){
 
     Shell* top = NULL;
-    for(int i = 0; i < commandLine.size(); ++i){
+    for(unsigned i = 0; i < commandLine.size(); ++i){
         string temp;
         if(commandLine.at(i) == ';'){
             //make substr
