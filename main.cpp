@@ -48,9 +48,7 @@ class Semi : public Connector{
         Semi() : Connector (){};
         Semi(Shell* f, Shell* s) : Connector(f, s){};
         bool execute(){
-            cout << "executing tree" << endl;
             first->execute();
-            cout << "executed first" << endl;
             return second->execute();
         }
 };
@@ -74,7 +72,6 @@ class Command : public Shell{
         Command() : Shell(){};
         Command(char c[], vector<string> a) : Shell(), cmd(c), args(a) {};
         bool execute(){
-            cout << "executed command" << endl;
             return true;
             
         // //real execute
@@ -95,7 +92,6 @@ class Command : public Shell{
 };
 
 Shell* stringToCommand(string commandLine){
-    cout << "starting stringToCommand" << endl;
     stringstream ss;
     ss << commandLine;
     // //sets up everything to use stringstream
@@ -125,17 +121,15 @@ void parse(string commandLine){
             i = 0;
             //issue where it never enteres the first if statement
             if(top == NULL){
-                cout << "top is empty" << endl;
                 Shell* connect = new Semi;
                 top = connect;
                 //Shell* 
                 connect->first = stringToCommand(temp);
             }
             else{
-                cout << "top is not empty" << endl;
-                Shell* connect = new Semi(top, stringToCommand(temp));
-                // connect->first = top;
-                // top->second = stringToCommand(temp);
+                Shell* connect = new Semi;
+                connect->first = top;
+                top->second = stringToCommand(temp);
                 top = connect;
             }
         }
@@ -190,7 +184,6 @@ void parse(string commandLine){
     else{
         top->second = stringToCommand(temp);
     }
-    cout << "going to execute!" << endl;
     top->execute();
 }
 
