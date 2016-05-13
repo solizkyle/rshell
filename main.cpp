@@ -48,8 +48,6 @@ class Semi : public Connector{
         Semi() : Connector (){};
         Semi(Shell* f, Shell* s) : Connector(f, s){};
         bool execute(){
-            cout << "first: " << &first << endl;
-            cout << "second: " << &second << endl;
             first->execute();
             return second->execute();
         }
@@ -69,12 +67,12 @@ class Amp : public Connector{
 
 class Command : public Shell{
     public:
-        const char* cmd;
+        string cmd; // is it becuase you're trying to change a const?
         vector<string> args;
         Command() : Shell(){};
-        Command(char c[], vector<string> a) : Shell(), cmd(c), args(a) {};
+        Command(string c, vector<string> a) : Shell(), cmd(c), args(a) {};
         bool execute(){
-            cout << "Executed Command: " << cmd << endl;
+            cout << "Executed Command: " << (const char *)cmd.c_str() << endl;
             return true;
             
         // //real execute
@@ -95,16 +93,14 @@ class Command : public Shell{
 };
 
 Shell* stringToCommand(string commandLine){
-    cout << "starting stringToCommand" << endl;
     stringstream ss;
     ss << commandLine;
     // //sets up everything to use stringstream
     //builds new command
-    Shell* temp = new Command;
+    Command* temp = new Command;
     string tempString;
     ss >> tempString;
-    temp->cmd = tempString.c_str();
-    cout << "cmd parsed: " << tempString << endl;
+    temp->cmd = tempString;
     //takes in any potential arguments
     while(ss >> tempString){
         temp->args.push_back(tempString);
@@ -119,7 +115,7 @@ void parse(string commandLine){
         string temp;
         if(commandLine.at(i) == ';'){
             //make substr
-            temp = commandLine.substr(0, i);
+            temp = commandLine.substr(0, i); // didn't include actual character
             //delete what we took
             commandLine.erase(0, i + 1);
             //reset i
@@ -194,11 +190,12 @@ void parse(string commandLine){
 
 int main() {
     string commandLine;
-    while(commandLine != "exit"){
-        cout << '$';
-        getline(cin, commandLine);
+    while(cout << '$' && getline(cin, commandLine) && commandLine != "exit"){
         parse(commandLine);
     }
     return 0;
 }
-// change
+// changes made: changed while loop to exit correctly
+// fixed problem. i think it had to do with polymorphism
+// basically, just store cmd as a string. and when you want to use it
+// cast it as (const char *)cmd.c_str()
