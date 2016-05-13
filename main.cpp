@@ -13,7 +13,6 @@ using namespace std;
 
 //TODO:
 //  Write function to delete everything after a # (fix comments)
-//  Bug where you have to write exit twice to actually exit
 //  Finish execute()
 //  Known bug: sometimes crashes when you try to run one command after another 
 class Shell{
@@ -77,16 +76,23 @@ class Command : public Shell{
         Command() : Shell(){};
         Command(string c, vector<string> a) : Shell(), cmd(c), args(a) {};
         bool execute(){
+            int size = args.size() + 2;
             //better way of doing it
             char **argv = new char*[args.size() + 2];
             char *tempcmd = new char[cmd.size()];
             strcpy(tempcmd, cmd.c_str());
             argv[0] = tempcmd;
-            for(unsigned i = 0; i < args.size(); ++i){
+            for(unsigned i = 1; i < args.size(); ++i){
                 char *temparg = new char[args.at(i).size()];
                 strcpy(temparg, args.at(i).c_str());
+                cout << "temparg = " << temparg << endl;
                 argv[i] = temparg;
             }
+            cout << "argv size: " << size << endl;
+            argv[size - 1] = NULL;
+            // for(int i = 0; i < size; ++i){
+            //     cout << argv[i] << endl;
+            // }
             //need to convert vector of args to a single string
             
             // //magic
@@ -110,7 +116,7 @@ class Command : public Shell{
             }
             else if(pid == 0){ //if this is the child process
                 //do stuff
-                cout << "am child: executing..." << endl;
+                cout << "am child: executing: " << argv[0] << endl;;
                 if(execvp(argv[0], argv) < 0){   //executes the command: if it fails, returns -1, else continue
                     cout << "execute failed" << endl;
                     exit(1);
