@@ -85,40 +85,19 @@ class Command : public Shell{
             for(unsigned i = 0; i < args.size(); ++i){
                 char *temparg = new char[args.at(i).size()];
                 strcpy(temparg, args.at(i).c_str());
-                cout << "temparg = " << temparg << endl;
                 argv[i + 1] = temparg;
             }
-            cout << "argv size: " << size << endl;
             argv[size - 1] = NULL;
-            // for(int i = 0; i < size; ++i){
-            //     cout << argv[i] << endl;
-            // }
-            //need to convert vector of args to a single string
-            
-            // //magic
-            // string argument = cmd;
-            // for(unsigned i = 0; i < args.size(); ++i){
-            //     argument = argument + " " + args.at(i);
-            // }
-            // cout << "entire command: " << argument << endl;
-            // char** tokens;
-            // tokens = new char*[argument.size() + 1];
-            // strcpy(*tokens, argument.c_str());
-            // *tokens = strtok(*tokens, " ");
-            // //magic
             
             pid_t pid;
             int status;
             //forks the process
             if((pid = fork()) < 0){ //if fork() failed
-                cout << "Error: fork failed" << endl;
                 return false;
             }
             else if(pid == 0){ //if this is the child process
                 //do stuff
-                cout << "am child: executing: " << argv[0] << endl;;
                 if(execvp(argv[0], argv) < 0){   //executes the command: if it fails, returns -1, else continue
-                    cout << "execute failed" << endl;
                     exit(1);
                 }
                 //exit(0);
