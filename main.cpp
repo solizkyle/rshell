@@ -48,6 +48,8 @@ class Semi : public Connector{
         Semi() : Connector (){};
         Semi(Shell* f, Shell* s) : Connector(f, s){};
         bool execute(){
+            cout << "first: " << &first << endl;
+            cout << "second: " << &second << endl;
             first->execute();
             return second->execute();
         }
@@ -93,14 +95,16 @@ class Command : public Shell{
 };
 
 Shell* stringToCommand(string commandLine){
+    cout << "starting stringToCommand" << endl;
     stringstream ss;
     ss << commandLine;
     // //sets up everything to use stringstream
     //builds new command
-    Command* temp = new Command;
+    Shell* temp = new Command;
     string tempString;
     ss >> tempString;
     temp->cmd = tempString.c_str();
+    cout << "cmd parsed: " << tempString << endl;
     //takes in any potential arguments
     while(ss >> tempString){
         temp->args.push_back(tempString);
