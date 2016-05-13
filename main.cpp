@@ -82,11 +82,11 @@ class Command : public Shell{
             char *tempcmd = new char[cmd.size()];
             strcpy(tempcmd, cmd.c_str());
             argv[0] = tempcmd;
-            for(unsigned i = 1; i < args.size(); ++i){
+            for(unsigned i = 0; i < args.size(); ++i){
                 char *temparg = new char[args.at(i).size()];
                 strcpy(temparg, args.at(i).c_str());
                 cout << "temparg = " << temparg << endl;
-                argv[i] = temparg;
+                argv[i + 1] = temparg;
             }
             cout << "argv size: " << size << endl;
             argv[size - 1] = NULL;
