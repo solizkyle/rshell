@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <sstream>
 #include <unistd.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 using namespace std;
@@ -14,6 +15,7 @@ using namespace std;
 //  Write function to delete everything after a # (fix comments)
 //  Bug where you have to write exit twice to actually exit
 //  Finish execute()
+//  Known bug: sometimes crashes when you try to run one command after another 
 class Shell{
     public:
         Shell* first;
@@ -75,11 +77,8 @@ class Command : public Shell{
         Command() : Shell(){};
         Command(string c, vector<string> a) : Shell(), cmd(c), args(a) {};
         bool execute(){
-            // cout << "Executed Command: " << (const char *)cmd.c_str() << endl;
-            // return true;
-            //real execute
             //need to convert vector of args to a single string
-            string argument;
+            string argument = cmd;
             for(unsigned i = 0; i < args.size(); ++i){
                 argument = argument + " " + args.at(i);
             }
@@ -88,15 +87,9 @@ class Command : public Shell{
             // tokens = new char*[argument.size() + 1];
             // strcpy(*tokens)
             
-            char** tok;
-            tok = new char*[cmd.size() +1];
-            *tok = strtok(*tok, " ");
-            //char temp = cmd.c_str();
-            //char* command = &temp;
             tokens = new char*[argument.size() + 1];
-            strcpy(*tok, argument.c_str());
+            strcpy(*tokens, argument.c_str());
             *tokens = strtok(*tokens, " ");
-            //const char * c = argument.c_str();
             pid_t pid;
             int status;
             //forks the process
@@ -106,9 +99,9 @@ class Command : public Shell{
             }
             else if(pid == 0){ //if this is the child process
                 //do stuff
-                
-                if(execvp(tok[0], tokens) < 0){   //executes the command: if it fails, returns -1, else continue
-                    return false;
+                cout << "am child: executing..." << endl;
+                if(execvp(tokens[0], tokens) < 0){   //executes the command: if it fails, returns -1, else continue
+                    exit(1);
                 }
             }
             else{ //if it is the parent process
