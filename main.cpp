@@ -8,9 +8,7 @@
 using namespace std;
 
 //TODO:
-//  Create parse function
 //  Add execute functionality to both classes
-//  Write loop in main function
 
 
 class Shell{
@@ -47,7 +45,9 @@ class Semi : public Connector{
         Semi() : Connector (){};
         Semi(Shell* f, Shell* s) : Connector(f, s){};
         bool execute(){
+            cout << "executing tree" << endl;
             first->execute();
+            cout << "executed first" << endl;
             return second->execute();
         }
 };
@@ -68,7 +68,6 @@ class Command : public Shell{
     public:
         const char* cmd;
         vector<string> args;
-        
         Command() : Shell(){};
         Command(char c[], vector<string> a) : Shell(), cmd(c), args(a) {};
         bool execute(){
@@ -78,61 +77,41 @@ class Command : public Shell{
 };
 
 Shell* stringToCommand(string commandLine){
+    cout << "starting stringToCommand" << endl;
     stringstream ss;
     ss << commandLine;
-    // //sets up everything to use strtok
-    // char* cmdLine = new char[cmd.length() + 1];
-    // const char s[2] = " ";
-    // char *token;
-    // token = strtok(cmdLine, s);
+    // //sets up everything to use stringstream
     //builds new command
     Command* temp = new Command;
     string tempString;
     ss >> tempString;
     temp->cmd = tempString.c_str();
+    //takes in any potential arguments
     while(ss >> tempString){
         temp->args.push_back(tempString);
     }
-    // if(token != NULL){
-
-    // }
-    // while(token != NULL){
-    //     temp->args.push_back(token);
-    //     token = strtok(NULL, s);
-    // }
     return temp;
 }
 
 void parse(string commandLine){
 
-    Shell* top = NULL;
-    vector<string> commands;
-    vector<string> connectors;
+    Shell* top = 0;
     for(int i = 0; i < commandLine.size(); ++i){
-        cout << "current: " << i << endl;
         string temp;
         if(commandLine.at(i) == ';'){
-            cout << "found semi" << endl;
             //make substr
-            cout << "created substr" << endl;
             temp = commandLine.substr(0, i);
-            cout << "substr: " << temp << endl;
             //delete what we took
-            cout << "erased substr from master string" << endl;
             commandLine.erase(0, i + 1);
-            cout << "new master string: " << commandLine << endl;
             //reset i
             i = 0;
-            cout << "top: " << top << endl;
             //issue where it never enteres the first if statement
-            if(top = NULL){
-                cout << "top is empty" << endl;
+            if(top == 0){
                 Shell* connect = new Semi;
                 top = connect;
                 connect->first = stringToCommand(temp);
             }
             else{
-                cout << "top is not empty" << endl;
                 Shell* connect = new Semi;
                 connect->first = top;
                 top->second = stringToCommand(temp);
@@ -144,10 +123,10 @@ void parse(string commandLine){
                 //make substr
                 temp = commandLine.substr(0, i);
                 //delete what we took
-                commandLine.erase(0, i);    //see below for deleting both connectors
+                commandLine.erase(0, i + 2);    //see below for deleting both connectors
                 //reset i
                 i = 0;
-                if(top = NULL){
+                if(top == 0){
                     Shell* connect = new Bars;
                     top = connect;
                     connect->first = stringToCommand(temp);
@@ -165,10 +144,10 @@ void parse(string commandLine){
                 //make substr
                 temp = commandLine.substr(0, i);
                 //delete what we took
-                commandLine.erase(0, i);    //need to change it so that it deletes both connectors  
+                commandLine.erase(0, i + 2);    //need to change it so that it deletes both connectors  
                 //reset i
                 i = 0;
-                if(top = NULL){
+                if(top == 0){
                     Shell* connect = new Amp;
                     top = connect;
                     connect->first = stringToCommand(temp);
@@ -181,22 +160,7 @@ void parse(string commandLine){
                 }
             }
         }
-    //     else{   //this needs to get moved outside of the loop
-    //             //this gets called every i that is not a connector
-    //         cout << "no connector found!" << endl;
-    //         //make substr
-    //         temp = commandLine.substr(0, i);
-    //         //if top != null, top->second = stringToCommand
-    //         if(top == NULL){
-    //             top = stringToCommand(temp);
-    //         }
-    //         else{
-    //             top->second = stringToCommand(temp);
-    //         }
-    //         //if top == null, top = stringToCommand
-    //     }
-    // }
-    cout << "no connector found!" << endl;
+    }
     string temp = commandLine;
     if(top == NULL){
         top = stringToCommand(temp);
@@ -204,6 +168,7 @@ void parse(string commandLine){
     else{
         top->second = stringToCommand(temp);
     }
+    //top->execute();
 }
 
 int main() {
