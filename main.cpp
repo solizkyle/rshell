@@ -77,19 +77,30 @@ class Command : public Shell{
         Command() : Shell(){};
         Command(string c, vector<string> a) : Shell(), cmd(c), args(a) {};
         bool execute(){
-            //need to convert vector of args to a single string
-            string argument = cmd;
+            //better way of doing it
+            char **argv = new char*[args.size() + 2];
+            char *tempcmd = new char[cmd.size()];
+            strcpy(tempcmd, cmd.c_str());
+            argv[0] = tempcmd;
             for(unsigned i = 0; i < args.size(); ++i){
-                argument = argument + " " + args.at(i);
+                char *temparg = new char[args.at(i).size()];
+                strcpy(temparg, args.at(i).c_str());
+                argv[i] = temparg;
             }
-            cout << "entire command: " << argument << endl;
-            char** tokens;
-            // tokens = new char*[argument.size() + 1];
-            // strcpy(*tokens)
+            //need to convert vector of args to a single string
             
-            tokens = new char*[argument.size() + 1];
-            strcpy(*tokens, argument.c_str());
-            *tokens = strtok(*tokens, " ");
+            // //magic
+            // string argument = cmd;
+            // for(unsigned i = 0; i < args.size(); ++i){
+            //     argument = argument + " " + args.at(i);
+            // }
+            // cout << "entire command: " << argument << endl;
+            // char** tokens;
+            // tokens = new char*[argument.size() + 1];
+            // strcpy(*tokens, argument.c_str());
+            // *tokens = strtok(*tokens, " ");
+            // //magic
+            
             pid_t pid;
             int status;
             //forks the process
@@ -100,9 +111,11 @@ class Command : public Shell{
             else if(pid == 0){ //if this is the child process
                 //do stuff
                 cout << "am child: executing..." << endl;
-                if(execvp(tokens[0], tokens) < 0){   //executes the command: if it fails, returns -1, else continue
+                if(execvp(argv[0], argv) < 0){   //executes the command: if it fails, returns -1, else continue
+                    cout << "execute failed" << endl;
                     exit(1);
                 }
+                //exit(0);
             }
             else{ //if it is the parent process
                 while(wait(&status) != pid)
