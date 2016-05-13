@@ -12,7 +12,18 @@
 using namespace std;
 
 //TODO:
-//  Write function to delete everything after a # (fix comments)
+//  Change makefile to create Bin/rshell.out
+//  Add Src folder and put main.cpp into it
+//  Change the makefile so that it finds the new location for main.cpp
+//  Make tests folder
+//  Write testcases for this program (scripts)
+//  Test this program on the hammer server before uploading
+//  Write the README.md
+//  Do whatever we need to do for license
+//  Merge the branches and add the "hw" tag
+//  Create submission file
+
+
 class Shell{
     public:
         Shell* first;
@@ -74,8 +85,9 @@ class Command : public Shell{
         Command() : Shell(){};
         Command(string c, vector<string> a) : Shell(), cmd(c), args(a) {};
         bool execute(){
+            //size of argv
             int size = args.size() + 2;
-            //better way of doing it
+            //
             char **argv = new char*[args.size() + 2];
             char *tempcmd = new char[cmd.size()];
             strcpy(tempcmd, cmd.c_str());
