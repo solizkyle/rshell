@@ -9,7 +9,7 @@ using namespace std;
 
 //TODO:
 //  Add execute functionality to both classes
-
+//  Write function to delete everything after a # (fix comments)
 
 class Shell{
     public:
@@ -21,10 +21,13 @@ class Shell{
 
 class Connector : public Shell{
     public: 
-        Shell* first;
-        Shell* second;
+        // Shell* first;
+        // Shell* second;
         Connector() : Shell(){};
-        Connector(Shell* f, Shell* s) : first(f), second(s){};
+        Connector(Shell* f, Shell* s){
+            first = f;
+            second = s;
+        };
         virtual bool execute() = 0; // for compiler
 };
 
@@ -73,7 +76,22 @@ class Command : public Shell{
         bool execute(){
             cout << "executed command" << endl;
             return true;
-        }
+            
+        // //real execute
+        // pid_t pid;
+        // int status;
+        // //forks the process
+        // if((pid = fork()) < 0){ //if fork() failed
+        //     cout << "Error: fork failed" << endl;
+        //     return false;
+        // }
+        // else if(pid == 0){ //if this is the child process
+            
+        // }
+        // else{ //if it is the parent process
+        //     while()
+        // }
+    }
 };
 
 Shell* stringToCommand(string commandLine){
@@ -95,7 +113,7 @@ Shell* stringToCommand(string commandLine){
 
 void parse(string commandLine){
 
-    Shell* top = 0;
+    Shell* top = NULL;
     for(int i = 0; i < commandLine.size(); ++i){
         string temp;
         if(commandLine.at(i) == ';'){
@@ -106,15 +124,18 @@ void parse(string commandLine){
             //reset i
             i = 0;
             //issue where it never enteres the first if statement
-            if(top == 0){
+            if(top == NULL){
+                cout << "top is empty" << endl;
                 Shell* connect = new Semi;
                 top = connect;
+                //Shell* 
                 connect->first = stringToCommand(temp);
             }
             else{
-                Shell* connect = new Semi;
-                connect->first = top;
-                top->second = stringToCommand(temp);
+                cout << "top is not empty" << endl;
+                Shell* connect = new Semi(top, stringToCommand(temp));
+                // connect->first = top;
+                // top->second = stringToCommand(temp);
                 top = connect;
             }
         }
@@ -126,10 +147,11 @@ void parse(string commandLine){
                 commandLine.erase(0, i + 2);    //see below for deleting both connectors
                 //reset i
                 i = 0;
-                if(top == 0){
+                if(top == NULL){
                     Shell* connect = new Bars;
                     top = connect;
                     connect->first = stringToCommand(temp);
+                    top->execute();
                 }
                 else{
                     Shell* connect = new Bars;
@@ -147,7 +169,7 @@ void parse(string commandLine){
                 commandLine.erase(0, i + 2);    //need to change it so that it deletes both connectors  
                 //reset i
                 i = 0;
-                if(top == 0){
+                if(top == NULL){
                     Shell* connect = new Amp;
                     top = connect;
                     connect->first = stringToCommand(temp);
@@ -168,7 +190,8 @@ void parse(string commandLine){
     else{
         top->second = stringToCommand(temp);
     }
-    //top->execute();
+    cout << "going to execute!" << endl;
+    top->execute();
 }
 
 int main() {

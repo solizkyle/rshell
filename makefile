@@ -1,5 +1,5 @@
 CC=g++
-CC_FLAGS=
+CC_FLAGS= 
 EXEC=rshell
 SOURCES=$(wildcard *.cpp)
 OBJECTS=$(SOURCES:.cpp=.o)
