@@ -72,6 +72,7 @@ class Command : public Shell{
         Command() : Shell(){};
         Command(char c[], vector<string> a) : Shell(), cmd(c), args(a) {};
         bool execute(){
+            cout << "Executed Command: " << cmd << endl;
             return true;
             
         // //real execute
