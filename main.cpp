@@ -13,8 +13,6 @@ using namespace std;
 
 //TODO:
 //  Write function to delete everything after a # (fix comments)
-//  Finish execute()
-//  Known bug: sometimes crashes when you try to run one command after another 
 class Shell{
     public:
         Shell* first;
@@ -127,7 +125,12 @@ Shell* stringToCommand(string commandLine){
 }
 
 void parse(string commandLine){
-
+    //deletes comments
+    if(commandLine.find("#") != string::npos){
+        int location = commandLine.find("#");
+        commandLine.erase(location, 999);
+    }
+    //top of the tree to be executed
     Shell* top = NULL;
     for(unsigned i = 0; i < commandLine.size(); ++i){
         string temp;
