@@ -20,7 +20,6 @@ using namespace std;
 //  Write testcases for this program (scripts)
 //  Test this program on the hammer server before uploading
 //  Write the README.md
-//  Do whatever we need to do for license
 //  Merge the branches and add the "hw" tag
 //  Create submission file
 
