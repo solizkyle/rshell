@@ -14,10 +14,8 @@ using namespace std;
 //TODO:
 //  Write testcases for this program (scripts)
 //  Test this program on the hammer server before uploading
-//  Write the README.md
 //  Merge the branches and add the "hw" tag
 //  Create submission file
-//  Virtual function delete
 
 
 class Shell{
