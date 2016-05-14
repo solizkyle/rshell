@@ -106,7 +106,7 @@ class Command : public Shell{
             else if(pid == 0){ //if this is the child process
                 //do stuff
                 if(execvp(argv[0], argv) < 0){   //executes the command: if it fails, returns -1, else continue
-                    perror("Command Failed :^)");
+                    perror("( ͡° ͜ʖ ͡°)  INVALID COMMAND");
                     exit(EXIT_FAILURE);
                 }
                 
@@ -237,7 +237,4 @@ int main() {
     }
     return 0;
 }
-// changes made: changed while loop to exit correctly
-// fixed problem. i think it had to do with polymorphism
-// basically, just store cmd as a string. and when you want to use it
-// cast it as (const char *)cmd.c_str()
+
