@@ -1,17 +1,16 @@
+#complier to use
 CC=g++
+#flags for compiler
 CC_FLAGS= -Wall -Werror -ansi -pedantic
+#executable filename
 EXEC=rshell
-SOURCES=$(wildcard *.cpp)
 OBJECTS=$(SOURCES:.cpp=.o)
-OBJDIR=obj
+#make all will create all necessary files
+all: rshell
 
-$(EXEC): $(OBJECTS)
+rshell:
+	$(CC) $(CC_FLAGS) -I header -o rshell src/main.cpp
 	mkdir -p bin
-	$(CC) $(OBJECTS) -o $(EXEC)
-
-%.o: %.cpp
-	$(CC) -c $(CC_FLAGS) $< -o $@
-
+	mv rshell bin
 clean:
-	rm -f $(EXEC) $(OBJECTS)
 	rm -rf bin
