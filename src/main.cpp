@@ -13,7 +13,6 @@ using namespace std;
 
 //TODO:
 //  Change makefile to create Bin/rshell.out
-//  Virtual function delete
 //  Add Src folder and put main.cpp into it
 //  Change the makefile so that it finds the new location for main.cpp
 //  Make tests folder
@@ -22,6 +21,7 @@ using namespace std;
 //  Write the README.md
 //  Merge the branches and add the "hw" tag
 //  Create submission file
+//  Virtual function delete
 
 
 class Shell{
@@ -132,7 +132,7 @@ class Command : public Shell{
                 // while(wait(&status) != pid)
                 // ;
             }
-            return true;
+            return false;
     }
 };
 
