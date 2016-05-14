@@ -1,13 +1,13 @@
 # Rshell
 _______
-## Authors
+### Authors
 Jake Morales, Kyle Soliz
 ___
-## Synopsis
+### Synopsis
 **Rshell** is command shell written in C++. Rshell will run any command in */bin* with an additional command, *exit*. *exit* quits the **Rshell** program. Multiple commands on one line may be executed at the same time if they are seperated by **";"**, **"||"** and/or **"&&"**. **";"** will executed the next command regardless if the previous commands fails or not. **"||"** executes the next command if the previous one fails. **"&&"** executes the next command if the previous one succeeds.
 ___
-## Execution
-run.exe
+### Execution
+In the rshell directory, run *make*. This creates an executeable. Then, run *./rshell* to execute.
 ___
-## License
+### License
 Read the LICENSE file for more information about the BDS3 license.
