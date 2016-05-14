@@ -13,7 +13,6 @@ using namespace std;
 
 //TODO:
 //  Write testcases for this program (scripts)
-//  Test this program on the hammer server before uploading
 //  Merge the branches and add the "hw" tag
 //  Create submission file
 
