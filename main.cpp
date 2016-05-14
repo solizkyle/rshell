@@ -13,6 +13,7 @@ using namespace std;
 
 //TODO:
 //  Change makefile to create Bin/rshell.out
+//  Virtual function delete
 //  Add Src folder and put main.cpp into it
 //  Change the makefile so that it finds the new location for main.cpp
 //  Make tests folder
@@ -85,6 +86,9 @@ class Command : public Shell{
         Command() : Shell(){};
         Command(string c, vector<string> a) : Shell(), cmd(c), args(a) {};
         bool execute(){
+            if(cmd == "exit"){
+                exit(0);
+            }
             //size of argv
             int size = args.size() + 2;
             //
@@ -100,21 +104,34 @@ class Command : public Shell{
             argv[size - 1] = NULL;
             
             pid_t pid;
-            int status;
+            //int status;
             //forks the process
             if((pid = fork()) < 0){ //if fork() failed
+                perror("Fork failed");
                 return false;
             }
             else if(pid == 0){ //if this is the child process
                 //do stuff
                 if(execvp(argv[0], argv) < 0){   //executes the command: if it fails, returns -1, else continue
-                    exit(1);
+                    perror("Command Failed :^)");
+                    exit(EXIT_FAILURE);
                 }
+                
                 //exit(0);
             }
             else{ //if it is the parent process
-                while(wait(&status) != pid)
-                ;
+                int status;
+                waitpid(pid, &status, WUNTRACED | WCONTINUED);
+                if(WIFEXITED(status)){
+                    if(WEXITSTATUS(status) == 0){
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+                // while(wait(&status) != pid)
+                // ;
             }
             return true;
     }
@@ -179,7 +196,6 @@ void parse(string commandLine){
                     Shell* connect = new Bars;
                     top = connect;
                     connect->first = stringToCommand(temp);
-                    top->execute();
                 }
                 else{
                     Shell* connect = new Bars;
