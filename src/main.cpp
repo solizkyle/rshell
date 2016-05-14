@@ -12,10 +12,6 @@
 using namespace std;
 
 //TODO:
-//  Change makefile to create Bin/rshell.out
-//  Add Src folder and put main.cpp into it
-//  Change the makefile so that it finds the new location for main.cpp
-//  Make tests folder
 //  Write testcases for this program (scripts)
 //  Test this program on the hammer server before uploading
 //  Write the README.md
