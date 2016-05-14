@@ -9,5 +9,8 @@ ___
 ### Execution
 In the rshell directory, run *make*. This creates an executeable. Then, run *./rshell* to execute.
 ___
+### Testing
+In the *tests* folder, there are multiple bash scripts for testing various cases. Run *"./_test_.sh"*. It will automatically compile rshell in the test folder, run the script, and delete the rshell it made. 
+___
 ### License
 Read the LICENSE file for more information about the BDS3 license.
