@@ -229,9 +229,25 @@ void parse(string commandLine){
     top->execute();
 }
 
+//extra credit prompt
+void getUser(string &prompt){
+    char* user = getlogin();
+    if(user == NULL){
+        cout << "Can't get login" << endl;
+        return;
+    }
+    char host[1024];
+    gethostname(host, 1023);
+    prompt = prompt + user + '@' + host;
+}
+
 int main() {
     string commandLine;
-    while(cout << '$' && getline(cin, commandLine) && commandLine != "exit"){
+    string prompt;
+    getUser(prompt);
+    prompt = prompt + '$';
+    while(getline(cin, commandLine) && commandLine != "exit"){
+        cout << prompt;
         parse(commandLine);
     }
     return 0;
