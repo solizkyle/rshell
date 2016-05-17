@@ -17,5 +17,4 @@ Read the LICENSE file for more information about the BDS3 license.
 ___
 ### Known Bugs
 1. Prints the prompt twice if user inputs a bad command.
-___
 
