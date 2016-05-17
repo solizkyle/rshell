@@ -13,7 +13,8 @@ ___
 In the *tests* folder, there are multiple bash scripts for testing various cases. Run *"./_test_.sh"*. It will automatically compile rshell in the test folder, run the script, and delete the rshell it made. 
 ___
 ### Known Bugs
-+ Prints the prompt twice if user inputs a bad command.
+1. Prints the prompt twice if user inputs a bad command.
 ___
 ### License
 Read the LICENSE file for more information about the BDS3 license.
+___
