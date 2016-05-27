@@ -13,7 +13,7 @@ using namespace std;
 
 //TODO:
 //  Write testcases for this program (scripts)
-//  Merge the branches and add the "hw" tag
+//  Merge the branches and add the "hw3" tag
 //  Create submission file
 
 
@@ -145,7 +145,7 @@ Shell* stringToCommand(string commandLine){
     return temp;
 }
 
-void parse(string commandLine){
+Shell* parse(string commandLine){
     //deletes comments
     if(commandLine.find("#") != string::npos){
         int location = commandLine.find("#");
@@ -153,6 +153,18 @@ void parse(string commandLine){
     }
     //top of the tree to be executed
     Shell* top = NULL;
+    
+    
+    if((commandLine.find("(") != string::npos) && (commandLine.find(")") != string::npos)){
+        
+    }
+    ( (some commands) && (even more commands) ) || (more commands)
+    //here we need to add the section that will look for parenthesis
+    //after it finds parenthesis it needs to cut that section out and make it a new string
+    
+    
+    
+    
     for(unsigned i = 0; i < commandLine.size(); ++i){
         string temp;
         if(commandLine.at(i) == ';'){
@@ -226,7 +238,8 @@ void parse(string commandLine){
     else{
         top->second = stringToCommand(temp);
     }
-    top->execute();
+    //top->execute();
+    return top;
 }
 
 //extra credit prompt
@@ -248,7 +261,8 @@ int main() {
     prompt = prompt + '$';
     while(getline(cin, commandLine) && commandLine != "exit"){
         cout << prompt;
-        parse(commandLine);
+        Shell* tree = parse(commandLine);
+        tree->execute();
     }
     return 0;
 }
