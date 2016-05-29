@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <stack>
 using namespace std;
 
 //TODO:
@@ -71,6 +72,14 @@ class Amp : public Connector{
         }
 };
 
+class Par : public Connector{
+    public:
+        Par() : Connector (){};
+        bool execute(){
+            return first->execute();
+        }
+};
+
 class Command : public Shell{
     public:
         string cmd; // is it becuase you're trying to change a const?
@@ -81,6 +90,8 @@ class Command : public Shell{
             if(cmd == "exit"){
                 exit(0);
             }
+            // cout << cmd << endl;
+            // return true;
             //size of argv
             int size = args.size() + 2;
             //
@@ -154,20 +165,40 @@ Shell* parse(string commandLine){
     //top of the tree to be executed
     Shell* top = NULL;
     
-    
-    if((commandLine.find("(") != string::npos) && (commandLine.find(")") != string::npos)){
+    // Checks for precedence
+    // if((commandLine.find("(") != string::npos) && (commandLine.find(")") != string::npos)){
         
-    }
-    ( (some commands) && (even more commands) ) || (more commands)
+    //     stack<int> parenthesis;
+    //     int endLocation = 0;
+    //     string subString;
+    //     //goes through commandLine character by character
+    //     for(i = commandLine.find("("); !parenthesis.empty(); ++i){
+    //         if(commandLine.at(i) == "("){
+    //             parenthesis.push(i);
+    //         }
+    //         else if(commandLine.at(i) == ")"){
+    //             parenthesis.pop();
+    //         }
+    //         if(parenthesis.empty()){
+    //             endLocation = i;
+    //         }
+    //         //from commandLine.find("(") to endLocation is our new string to run through parse()
+    //     }
+    //     // also get rid of parenthesis
+        
+    //     return parse(subString);
+    // }
+    //( ( some commands) && (even more commands) ) || (more commands) && (damn commands)
     //here we need to add the section that will look for parenthesis
     //after it finds parenthesis it needs to cut that section out and make it a new string
-    
-    
-    
-    
+
     for(unsigned i = 0; i < commandLine.size(); ++i){
         string temp;
-        if(commandLine.at(i) == ';'){
+        //stack
+        //bool closed = true;
+        // checks for parenthesis & adjusts stack
+        
+        if(commandLine.at(i) == ';' /* && closed == true */){
             //make substr
             temp = commandLine.substr(0, i); // didn't include actual character
             //delete what we took
@@ -229,6 +260,40 @@ Shell* parse(string commandLine){
                     top = connect;
                 }
             }
+        }
+        else if(commandLine.at(i) == '('){
+            stack<int> parenthesis;
+            int endLocation = 0;
+            //goes through commandLine character by character
+            for(int j = commandLine.find("("); !parenthesis.empty(); ++j){
+                if(commandLine.at(j) == '('){
+                    parenthesis.push(j);
+                }
+                else if(commandLine.at(j) == ')'){
+                    parenthesis.pop();
+                }
+                if(parenthesis.empty()){
+                    endLocation = j;
+                }
+                //from commandLine.find("(") to endLocation is our new string to run through parse()
+            }
+            temp = commandLine.substr(i + 1, endLocation - 3);
+            commandLine.erase(i + 1, endLocation - 1);
+            //everything from above only deals with parenthesis
+            //below is the same logic from every other connector
+            if(top == NULL){
+                Shell* connect = new Par;
+                top = connect;
+                connect->first = parse(temp);
+            }
+            else{
+                Shell* connect = new Par;
+                connect->first = parse(temp);
+                top->second = connect;
+            }
+            
+            
+            
         }
     }
     string temp = commandLine;
