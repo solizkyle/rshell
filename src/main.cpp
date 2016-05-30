@@ -90,7 +90,7 @@ class Command : public Shell{
             if(cmd == "exit"){
                 exit(0);
             }
-            // cout << cmd << endl;
+            cout << "cmd: " << cmd << endl;
             // return true;
             //size of argv
             int size = args.size() + 2;
@@ -105,7 +105,12 @@ class Command : public Shell{
                 argv[i + 1] = temparg;
             }
             argv[size - 1] = NULL;
-            
+            // if(cmd.at(0) == '[' || argv[0] == "test"){
+            //     //do the test command stuff
+                
+                
+            //     return true; //finish this
+            // }
             pid_t pid;
             //int status;
             //forks the process
@@ -164,36 +169,10 @@ Shell* parse(string commandLine){
     }
     //top of the tree to be executed
     Shell* top = NULL;
-    
-    // Checks for precedence
-    // if((commandLine.find("(") != string::npos) && (commandLine.find(")") != string::npos)){
-        
-    //     stack<int> parenthesis;
-    //     int endLocation = 0;
-    //     string subString;
-    //     //goes through commandLine character by character
-    //     for(i = commandLine.find("("); !parenthesis.empty(); ++i){
-    //         if(commandLine.at(i) == "("){
-    //             parenthesis.push(i);
-    //         }
-    //         else if(commandLine.at(i) == ")"){
-    //             parenthesis.pop();
-    //         }
-    //         if(parenthesis.empty()){
-    //             endLocation = i;
-    //         }
-    //         //from commandLine.find("(") to endLocation is our new string to run through parse()
-    //     }
-    //     // also get rid of parenthesis
-        
-    //     return parse(subString);
-    // }
-    //( ( some commands) && (even more commands) ) || (more commands) && (damn commands)
-    //here we need to add the section that will look for parenthesis
-    //after it finds parenthesis it needs to cut that section out and make it a new string
 
     for(unsigned i = 0; i < commandLine.size(); ++i){
         string temp;
+        cout << "commandLine: " << commandLine << endl;
         //stack
         //bool closed = true;
         // checks for parenthesis & adjusts stack
@@ -265,20 +244,26 @@ Shell* parse(string commandLine){
             stack<int> parenthesis;
             int endLocation = 0;
             //goes through commandLine character by character
-            for(int j = commandLine.find("("); !parenthesis.empty(); ++j){
+            // for(int j = 0; j < commandLine.size() && parenthesis.empty(); ++j){
+                
+            // }
+            
+            
+            
+            parenthesis.push(i);
+            for(unsigned j = i + 1; !parenthesis.empty(); ++j){
                 if(commandLine.at(j) == '('){
                     parenthesis.push(j);
                 }
                 else if(commandLine.at(j) == ')'){
                     parenthesis.pop();
                 }
-                if(parenthesis.empty()){
-                    endLocation = j;
-                }
-                //from commandLine.find("(") to endLocation is our new string to run through parse()
+                endLocation = j;
             }
-            temp = commandLine.substr(i + 1, endLocation - 3);
-            commandLine.erase(i + 1, endLocation - 1);
+            temp = commandLine.substr(i + 1, endLocation - 1);
+            commandLine.erase(i, endLocation + 1);
+            cout << "temp: " << temp << endl;
+            cout << "endLocation: " << endLocation << endl;
             //everything from above only deals with parenthesis
             //below is the same logic from every other connector
             if(top == NULL){
