@@ -244,12 +244,6 @@ Shell* parse(string commandLine){
             stack<int> parenthesis;
             int endLocation = 0;
             //goes through commandLine character by character
-            // for(int j = 0; j < commandLine.size() && parenthesis.empty(); ++j){
-                
-            // }
-            
-            
-            
             parenthesis.push(i);
             for(unsigned j = i + 1; !parenthesis.empty(); ++j){
                 if(commandLine.at(j) == '('){
