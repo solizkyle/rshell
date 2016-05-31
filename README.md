@@ -14,3 +14,8 @@ In the *tests* folder, there are multiple bash scripts for testing various cases
 ___
 ### License
 Read the LICENSE file for more information about the BDS3 license.
+___
+### Known Bugs
+1. Prints the prompt twice if user inputs a bad command.
+2. Both the getLogin() and the test functions do not work on Clound9
+3. Using the test command causes the prompt to bug out and print multiple times
