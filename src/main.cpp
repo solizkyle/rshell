@@ -8,13 +8,15 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
+#include <stack>
+#include <algorithm>
 using namespace std;
 
 //TODO:
 //  Write testcases for this program (scripts)
-//  Merge the branches and add the "hw" tag
-//  Create submission file
+//  Merge the branches and add the "hw3" tag
 
 
 class Shell{
@@ -71,6 +73,14 @@ class Amp : public Connector{
         }
 };
 
+class Par : public Connector{
+    public:
+        Par() : Connector (){};
+        bool execute(){
+            return first->execute();
+        }
+};
+
 class Command : public Shell{
     public:
         string cmd; // is it becuase you're trying to change a const?
@@ -80,6 +90,46 @@ class Command : public Shell{
         bool execute(){
             if(cmd == "exit"){
                 exit(0);
+            }
+            string flag;
+            string directory;
+            if(cmd.at(0) == '[' || cmd == "test"){
+                //do the test command stuff
+                if(args.size() == 1){
+                    flag = "-e";
+                    directory = args.at(0);
+                }
+                else{
+                    flag = args.at(0);
+                    directory = args.at(1);
+                }
+                struct stat sb;
+                //const char* dir = new char[directory.size() + 1];
+                char temp[1024];
+                strcpy(temp, directory.c_str());
+                const char* dir = temp;
+                if(stat(dir, &sb) == -1){
+                    cout << "(False)" << endl;
+                    return false;
+                }
+                if(flag == "-f"){
+                    if(S_ISREG(sb.st_mode)){
+                        cout << "(True)" << endl;
+                        return true;
+                    }
+                    cout << "(False)" << endl;
+                    return false;
+                }
+                else if(flag == "-d"){
+                    if(S_ISDIR(sb.st_mode)){
+                        cout << "(True)" << endl;
+                        return true;
+                    }
+                    cout << "(False)" << endl;
+                    return false;
+                }
+                cout << "(True)" << endl;
+                return true;
             }
             //size of argv
             int size = args.size() + 2;
@@ -94,7 +144,7 @@ class Command : public Shell{
                 argv[i + 1] = temparg;
             }
             argv[size - 1] = NULL;
-            
+
             pid_t pid;
             //int status;
             //forks the process
@@ -145,7 +195,7 @@ Shell* stringToCommand(string commandLine){
     return temp;
 }
 
-void parse(string commandLine){
+Shell* parse(string commandLine){
     //deletes comments
     if(commandLine.find("#") != string::npos){
         int location = commandLine.find("#");
@@ -153,9 +203,14 @@ void parse(string commandLine){
     }
     //top of the tree to be executed
     Shell* top = NULL;
+
     for(unsigned i = 0; i < commandLine.size(); ++i){
         string temp;
-        if(commandLine.at(i) == ';'){
+        //stack
+        //bool closed = true;
+        // checks for parenthesis & adjusts stack
+        
+        if(commandLine.at(i) == ';' /* && closed == true */){
             //make substr
             temp = commandLine.substr(0, i); // didn't include actual character
             //delete what we took
@@ -218,6 +273,42 @@ void parse(string commandLine){
                 }
             }
         }
+        else if(commandLine.at(i) == '('){
+            if(commandLine.find('(') == string::npos){
+                cout << "INVALID COMMAND: No matching )" << endl;
+                exit(0);
+            } 
+            stack<int> parenthesis;
+            int endLocation = 0;
+            //goes through commandLine character by character
+            parenthesis.push(i);
+            for(unsigned j = i + 1; !parenthesis.empty(); ++j){
+                if(commandLine.at(j) == '('){
+                    parenthesis.push(j);
+                }
+                else if(commandLine.at(j) == ')'){
+                    parenthesis.pop();
+                }
+                endLocation = j;
+            }
+            temp = commandLine.substr(i + 1, endLocation - i - 1);
+            commandLine.erase(i, endLocation - i + 1);
+            //everything from above only deals with parenthesis
+            //below is the same logic from every other connector
+            if(top == NULL){
+                Shell* connect = new Par;
+                top = connect;
+                connect->first = parse(temp);
+            }
+            else{
+                Shell* connect = new Par;
+                connect->first = parse(temp);
+                top->second = connect;
+            }
+        }
+    }
+    if(commandLine.size() == 1){
+        return top;
     }
     string temp = commandLine;
     if(top == NULL){
@@ -226,7 +317,8 @@ void parse(string commandLine){
     else{
         top->second = stringToCommand(temp);
     }
-    top->execute();
+    //top->execute();
+    return top;
 }
 
 //extra credit prompt
@@ -248,8 +340,8 @@ int main() {
     prompt = prompt + '$';
     while(getline(cin, commandLine) && commandLine != "exit"){
         cout << prompt;
-        parse(commandLine);
+        Shell* tree = parse(commandLine);
+        tree->execute();
     }
     return 0;
 }
-
