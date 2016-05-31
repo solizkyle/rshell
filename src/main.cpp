@@ -8,8 +8,10 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <stack>
+#include <algorithm>
 using namespace std;
 
 //TODO:
@@ -90,8 +92,45 @@ class Command : public Shell{
             if(cmd == "exit"){
                 exit(0);
             }
-            cout << "cmd: " << cmd << endl;
-            // return true;
+            string flag;
+            string directory;
+            if(cmd.at(0) == '[' || cmd == "test"){
+                //do the test command stuff
+                if(args.size() == 1){
+                    flag = "-e";
+                    directory = args.at(0);
+                }
+                else{
+                    flag = args.at(0);
+                    directory = args.at(1);
+                }
+                struct stat sb;
+                //const char* dir = new char[directory.size() + 1];
+                char temp[1024];
+                strcpy(temp, directory.c_str());
+                const char* dir = temp;
+                if(stat(dir, &sb) == -1){
+                    cout << "(False)" << endl;
+                    return false;
+                }
+                if(flag == "-f"){
+                    if(S_ISREG(sb.st_mode)){
+                        cout << "(True)" << endl;
+                        return true;
+                    }
+                    cout << "(False)" << endl;
+                    return false;
+                }
+                else if(flag == "-d"){
+                    if(S_ISDIR(sb.st_mode)){
+                        cout << "(True)" << endl;
+                        return true;
+                    }
+                    cout << "(False)" << endl;
+                    return false;
+                }
+                return true;
+            }
             //size of argv
             int size = args.size() + 2;
             //
@@ -105,12 +144,7 @@ class Command : public Shell{
                 argv[i + 1] = temparg;
             }
             argv[size - 1] = NULL;
-            // if(cmd.at(0) == '[' || argv[0] == "test"){
-            //     //do the test command stuff
-                
-                
-            //     return true; //finish this
-            // }
+
             pid_t pid;
             //int status;
             //forks the process
@@ -172,7 +206,6 @@ Shell* parse(string commandLine){
 
     for(unsigned i = 0; i < commandLine.size(); ++i){
         string temp;
-        cout << "commandLine: " << commandLine << endl;
         //stack
         //bool closed = true;
         // checks for parenthesis & adjusts stack
@@ -241,6 +274,10 @@ Shell* parse(string commandLine){
             }
         }
         else if(commandLine.at(i) == '('){
+            if(commandLine.find('(') == string::npos){
+                cout << "INVALID COMMAND: No matching )" << endl;
+                exit(0);
+            } 
             stack<int> parenthesis;
             int endLocation = 0;
             //goes through commandLine character by character
@@ -254,10 +291,8 @@ Shell* parse(string commandLine){
                 }
                 endLocation = j;
             }
-            temp = commandLine.substr(i + 1, endLocation - 1);
-            commandLine.erase(i, endLocation + 1);
-            cout << "temp: " << temp << endl;
-            cout << "endLocation: " << endLocation << endl;
+            temp = commandLine.substr(i + 1, endLocation - i - 1);
+            commandLine.erase(i, endLocation - i + 1);
             //everything from above only deals with parenthesis
             //below is the same logic from every other connector
             if(top == NULL){
@@ -270,10 +305,10 @@ Shell* parse(string commandLine){
                 connect->first = parse(temp);
                 top->second = connect;
             }
-            
-            
-            
         }
+    }
+    if(commandLine.size() == 1){
+        return top;
     }
     string temp = commandLine;
     if(top == NULL){
@@ -310,4 +345,3 @@ int main() {
     }
     return 0;
 }
-
