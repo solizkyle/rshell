@@ -129,6 +129,7 @@ class Command : public Shell{
                     cout << "(False)" << endl;
                     return false;
                 }
+                cout << "(True)" << endl;
                 return true;
             }
             //size of argv
