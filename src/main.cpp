@@ -344,7 +344,10 @@ Shell* parse(string commandLine){
         }
         else if(commandLine.at(i) == '>'){
             if(commandLine.at(i + 1) == '>'){
-                //make redir command
+                //make substr
+                temp = commandLine.substr(0, i);
+                //delete what we took
+                commandLine.erase(0, i + 2);//make redir command
                 if(top == NULL){
                     Shell* connect = new Redir;
                     top = connect;
@@ -357,6 +360,10 @@ Shell* parse(string commandLine){
                 }
             }
             else{
+                //make substr
+                temp = commandLine.substr(0, i); // didn't include actual character
+                //delete what we took
+                commandLine.erase(0, i + 1);
                 //make append command
                 if(top == NULL){
                     Shell* connect = new Append;
@@ -371,6 +378,10 @@ Shell* parse(string commandLine){
             }
         }
         else if(commandLine.at(i) == '|'){
+            //make substr
+            temp = commandLine.substr(0, i); // didn't include actual character
+            //delete what we took
+            commandLine.erase(0, i + 1);
             //make pipe command
             if(top == NULL){
                 Shell* connect = new Pipe;
@@ -384,6 +395,10 @@ Shell* parse(string commandLine){
             }
         }
         else if(commandLine.at(i) == '<'){
+            //main substr
+            temp = commandLine.substr(0, i); // didn't include actual character
+            //delete what we took
+            commandLine.erase(0, i + 1);
             //make input command
             if(top == NULL){
                 Shell* connect = new Input;
