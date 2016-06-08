@@ -15,8 +15,10 @@
 using namespace std;
 
 //TODO:
-//  Write testcases for this program (scripts)
-//  Merge the branches and add the "hw3" tag
+//  Finish writing functionality
+//  Add testcases
+//  Merge the branches and add the "hw4" tag
+//  Submit to iLearn
 
 
 class Shell{
@@ -81,25 +83,161 @@ class Par : public Connector{
         }
 };
 
-class Input : public Connector{
+class Redir : public Connector{
+    //takes output from (left) and overwrites the file on (right)
     public:
-        Input() : Connector (){};
+        Redir(): Connector (){};
         bool execute(){
             
-            return true;
-        }
-}
-
-class Redir : public Connector{
-    public:
-        Redir() : Connector (){};
-        bool execute(){
+            int fd_p2c;
+            int fd_c2p;
+            
+            
+            //sets up to execute the left command
+            // string left = first->cmd;
+            // string outputFile = second->cmd;
+            // cout << "first: " << left << endl;
+            // cout << "second: " << outputFile << endl;
+            // vector<string> arg = first->args;
+            // int size = arg.size() + 2;
+            // char ** argv = new char*[arg.size() + 2];
+            // char *tempcmd = new char[left.size()];
+            // strcpy(tempcmd, left.c_str());
+            // argv[0] = tempcmd;
+            // for(unsigned i = 0; i < arg.size(); ++i){
+            //     char *temparg = new char[arg.at(i).size()];
+            //     strcpy(temparg, arg.at(i).c_str());
+            //     argv[i + 1] = temparg;
+            // }
+            // argv[size - 1] = NULL;
+            // int fd_p2c[2]; //pipe to child
+            // int fd_c2p[2]; //child to pipe
+            // pid_t pid;
+            // if(pipe(fd_p2c) != 0 || pipe(fd_c2p) != 0){
+            //     perror("Piping error");
+            //     exit(EXIT_FAILURE);
+            // }
+            // if((pid = fork()) < 0){ //if fork() failed
+            //     perror("Fork failed");
+            //     return false;
+            // }
+            // else if(pid == 0){ //if this is the child process
+            //     //do stuff
+            //     // if(dup2(fd_p2c[0], 0) != 0 || close(fd_p2c[0]) != 0 || close(fd_p2c[1]) != 0){
+            //     //     //sets read end of pipe to standard input (fd_p2c[0])
+            //     //     perror("CHILD: input setup failed");
+            //     //     exit(EXIT_FAILURE);
+            //     // }
+            //     if(dup2(fd_c2p[1], 1) != 1 || close(fd_c2p[1]) != 0 || close(fd_c2p[0]) != 0){
+            //         //sets write end of pipe to standard output (fd_c2p[1])
+            //         perror("PARENT: output setup failed");
+            //         exit(EXIT_FAILURE);
+            //     }
+            //     if(execvp(argv[0], argv) < 0){   //executes the command: if it fails, returns -1, else continue
+            //         perror("( ͡° ͜ʖ ͡°)  INVALID COMMAND");
+            //         exit(EXIT_FAILURE);
+            //     }
+                
+            // }
+            // else{ //parent process
+            //     if(dup2(fd_p2c[0], 0) != 0 || close(fd_p2c[0]) != 0 || close(fd_p2c[1]) != 0){
+            //         //sets read end of pipe to standard input (fd_p2c[0])
+            //         perror("CHILD: input setup failed");
+            //         exit(EXIT_FAILURE);
+            //     }
+            //     int status;
+            //     waitpid(pid, &status, WUNTRACED | WCONTINUED);
+            //     if(WIFEXITED(status)){
+            //         if(WEXITSTATUS(status) == 0){
+            //             //sets up everything to run second command
+            //             cout << "this is from the pipe" << fd_p2c[0] << endl;
+                        
+            //             return true;
+            //         }
+            //         else{
+            //             return false;
+            //         }
+            //     }
+            // }
             
             return true;
         }
 };
 
+class Input : public Connector{
+    //takes output from (left) and overwrites the file on (right)
+    public:
+        Input() : Connector (){};
+        bool execute(){
+            //sets up to execute the left command
+            // string left = first->cmd;
+            // string outputFile = second->cmd;
+            // vector<string> arg = first->args;
+            // int size = arg.size() + 2;
+            // char ** argv = new char*[arg.size() + 2];
+            // char *tempcmd = new char[left.size()];
+            // strcpy(tempcmd, left.c_str());
+            // argv[0] = tempcmd;
+            // for(unsigned i = 0; i < arg.size(); ++i){
+            //     char *temparg = new char[arg.at(i).size()];
+            //     strcpy(temparg, arg.at(i).c_str());
+            //     argv[i + 1] = temparg;
+            // }
+            // argv[size - 1] = NULL;
+            // int fd_p2c[2]; //pipe to child
+            // int fd_c2p[2]; //child to pipe
+            // int bytes_read;
+            // pid_t pid;
+            // char readbuffer[80];
+            // if(pipe(fd_p2c) != 0 || pipe(fd_c2p) != 0){
+            //     perror("Piping error");
+            //     exit(EXIT_FAILURE);
+            // }
+            // if((pid = fork()) < 0){ //if fork() failed
+            //     perror("Fork failed");
+            //     return false;
+            // }
+            // else if(pid == 0){ //if this is the child process
+            //     //do stuff
+            //     if(dup2(fd_p2c[0], 0) != 0 || close(fd_p2c[0]) != 0 || close(fd_p2c[1]) != 0){
+            //         //sets read end of pipe to standard input (fd_p2c[0])
+            //         perror("CHILD: input setup failed");
+            //         exit(EXIT_FAILURE);
+            //     }
+            //     if(dup2(fd_c2p[1], 1) != 1 || close(fd_c2p[1]) != 0 || close(fd_c2p[0]) != 0){
+            //         //sets write end of pipe to standard output (fd_c2p[1])
+            //         perror("PARENT: output setup failed");
+            //         exit(EXIT_FAILURE);
+            //     }
+            //     if(execvp(argv[0], argv) < 0){   //executes the command: if it fails, returns -1, else continue
+            //         perror("( ͡° ͜ʖ ͡°)  INVALID COMMAND");
+            //         exit(EXIT_FAILURE);
+            //     }
+                
+            // }
+            // else{ //parent process
+            //     close(fd_p2c[0]);
+            //     close(fd_c2p[1]);
+            //     int status;
+            //     waitpid(pid, &status, WUNTRACED | WCONTINUED);
+            //     if(WIFEXITED(status)){
+            //         if(WEXITSTATUS(status) == 0){
+            //             return true;
+            //         }
+            //         else{
+            //             return false;
+            //         }
+            //     }
+            // }
+            
+            return true;
+        }
+};
+
+
+
 class Append: public Connector{
+    //takes output from (left) and appends to file on (right)
     public: 
         Append() : Connector() {};
         bool execute(){
@@ -112,14 +250,14 @@ class Pipe: public Connector{
     public: 
         Pipe() : Connector() {};
         bool execute(){
-            
+
             return true;
         }
 };
 
 class Command : public Shell{
     public:
-        string cmd; // is it becuase you're trying to change a const?
+        string cmd;
         vector<string> args;
         Command() : Shell(){};
         Command(string c, vector<string> a) : Shell(), cmd(c), args(a) {};
