@@ -81,6 +81,33 @@ class Par : public Connector{
         }
 };
 
+class Redir : public Connector{
+    public:
+        Redir() : Connector (){};
+        bool execute(){
+            
+            return true;
+        }
+};
+
+class Append: public Connector{
+    public: 
+        Append() : Connector() {};
+        bool execute(){
+            
+            return true;
+        }
+};
+
+class Pipe: public Connector{
+    public: 
+        Pipe() : Connector() {};
+        bool execute(){
+            
+            return true;
+        }
+};
+
 class Command : public Shell{
     public:
         string cmd; // is it becuase you're trying to change a const?
