@@ -81,6 +81,15 @@ class Par : public Connector{
         }
 };
 
+class Input : public Connector{
+    public:
+        Input() : Connector (){};
+        bool execute(){
+            
+            return true;
+        }
+}
+
 class Redir : public Connector{
     public:
         Redir() : Connector (){};
@@ -329,6 +338,60 @@ Shell* parse(string commandLine){
             }
             else{
                 Shell* connect = new Par;
+                connect->first = parse(temp);
+                top->second = connect;
+            }
+        }
+        else if(commandLine.at(i) == '>'){
+            if(commandLine.at(i + 1) == '>'){
+                //make redir command
+                if(top == NULL){
+                    Shell* connect = new Redir;
+                    top = connect;
+                    connect->first = parse(temp);
+                }
+                else{
+                    Shell* connect = new Redir;
+                    connect->first = parse(temp);
+                    top->second = connect;
+                }
+            }
+            else{
+                //make append command
+                if(top == NULL){
+                    Shell* connect = new Append;
+                    top = connect;
+                    connect->first = parse(temp);
+                }
+                else{
+                    Shell* connect = new Append;
+                    connect->first = parse(temp);
+                    top->second = connect;
+                }
+            }
+        }
+        else if(commandLine.at(i) == '|'){
+            //make pipe command
+            if(top == NULL){
+                Shell* connect = new Pipe;
+                top = connect;
+                connect->first = parse(temp);
+            }
+            else{
+                Shell* connect = new Pipe;
+                connect->first = parse(temp);
+                top->second = connect;
+            }
+        }
+        else if(commandLine.at(i) == '<'){
+            //make input command
+            if(top == NULL){
+                Shell* connect = new Input;
+                top = connect;
+                connect->first = parse(temp);
+            }
+            else{
+                Shell* connect = new Input;
                 connect->first = parse(temp);
                 top->second = connect;
             }
