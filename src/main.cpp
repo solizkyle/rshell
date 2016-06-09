@@ -12,6 +12,8 @@
 #include <sys/wait.h>
 #include <stack>
 #include <algorithm>
+#include <fcntl.h>
+#include <math.h>
 using namespace std;
 
 //TODO:
@@ -20,6 +22,8 @@ using namespace std;
 //  Merge the branches and add the "hw4" tag
 //  Submit to iLearn
 
+// might have to use for loop in command execute to chain redirections
+
 
 class Shell{
     public:
@@ -27,6 +31,7 @@ class Shell{
         Shell* second;
         Shell(){};
         virtual bool execute() = 0;
+        virtual string retName() = 0;
 };
 
 class Connector : public Shell{
@@ -39,6 +44,9 @@ class Connector : public Shell{
             second = s;
         };
         virtual bool execute() = 0; // for compiler
+        string retName(){
+            return "";
+        }
 };
 
 class Bars : public Connector{
@@ -51,6 +59,9 @@ class Bars : public Connector{
             }
             return true;
         }
+        string retName(){
+            return "";
+        }
 };
 
 class Semi : public Connector{
@@ -60,6 +71,9 @@ class Semi : public Connector{
         bool execute(){
             first->execute();
             return second->execute();
+        }
+        string retName(){
+            return "";
         }
 };
 
@@ -73,6 +87,9 @@ class Amp : public Connector{
             }
             return false; // else
         }
+        string retName(){
+            return "";
+        }
 };
 
 class Par : public Connector{
@@ -81,17 +98,46 @@ class Par : public Connector{
         bool execute(){
             return first->execute();
         }
+        string retName(){
+            return "";
+        }
 };
 
 class Redir : public Connector{
     //takes output from (left) and overwrites the file on (right)
     public:
-        Redir(): Connector (){};
+        Redir() : Connector(){};
         bool execute(){
             
-            int fd_p2c;
-            int fd_c2p;
+            //string fileName = "example.txt";
+            char file[100];
+            strcpy(file, second->retName().c_str());
+            int pFile;
+            if((pFile = open(file, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IROTH | S_IRGRP)) == -1){
+    				perror("Redir Error: Could not open file");
+    				return false;
+    				// return false; ??? instead
+    		}
+            int saveStdout = dup(1);
+            dup2(pFile, 1);
+            first->execute();
+            dup2(saveStdout, 1);
+            return true;
             
+            // int fd_p2c[2];
+            // int fd_c2p[2];
+            // //sets up both pipes
+            // if(pipe(fd_c2p) != 0 || pipe(fd_p2c) != 0){
+            //     perror("PIPE FAIL");
+            //     exit(EXIT_FAILURE);
+            // }
+            // //sets output to pipe input
+            // dup2(fd_p2c[1], 1);
+            // //runs the left command
+            // first->execute();
+            // //pipe should be full now
+            // //sets input to pipe output
+            // dup2(fd_p2c[0], 0);
             
             //sets up to execute the left command
             // string left = first->cmd;
@@ -159,8 +205,9 @@ class Redir : public Connector{
             //         }
             //     }
             // }
-            
-            return true;
+        }
+        string retName(){
+            return "";
         }
 };
 
@@ -169,80 +216,49 @@ class Input : public Connector{
     public:
         Input() : Connector (){};
         bool execute(){
-            //sets up to execute the left command
-            // string left = first->cmd;
-            // string outputFile = second->cmd;
-            // vector<string> arg = first->args;
-            // int size = arg.size() + 2;
-            // char ** argv = new char*[arg.size() + 2];
-            // char *tempcmd = new char[left.size()];
-            // strcpy(tempcmd, left.c_str());
-            // argv[0] = tempcmd;
-            // for(unsigned i = 0; i < arg.size(); ++i){
-            //     char *temparg = new char[arg.at(i).size()];
-            //     strcpy(temparg, arg.at(i).c_str());
-            //     argv[i + 1] = temparg;
-            // }
-            // argv[size - 1] = NULL;
-            // int fd_p2c[2]; //pipe to child
-            // int fd_c2p[2]; //child to pipe
-            // int bytes_read;
-            // pid_t pid;
-            // char readbuffer[80];
-            // if(pipe(fd_p2c) != 0 || pipe(fd_c2p) != 0){
-            //     perror("Piping error");
-            //     exit(EXIT_FAILURE);
-            // }
-            // if((pid = fork()) < 0){ //if fork() failed
-            //     perror("Fork failed");
-            //     return false;
-            // }
-            // else if(pid == 0){ //if this is the child process
-            //     //do stuff
-            //     if(dup2(fd_p2c[0], 0) != 0 || close(fd_p2c[0]) != 0 || close(fd_p2c[1]) != 0){
-            //         //sets read end of pipe to standard input (fd_p2c[0])
-            //         perror("CHILD: input setup failed");
-            //         exit(EXIT_FAILURE);
-            //     }
-            //     if(dup2(fd_c2p[1], 1) != 1 || close(fd_c2p[1]) != 0 || close(fd_c2p[0]) != 0){
-            //         //sets write end of pipe to standard output (fd_c2p[1])
-            //         perror("PARENT: output setup failed");
-            //         exit(EXIT_FAILURE);
-            //     }
-            //     if(execvp(argv[0], argv) < 0){   //executes the command: if it fails, returns -1, else continue
-            //         perror("( ͡° ͜ʖ ͡°)  INVALID COMMAND");
-            //         exit(EXIT_FAILURE);
-            //     }
-                
-            // }
-            // else{ //parent process
-            //     close(fd_p2c[0]);
-            //     close(fd_c2p[1]);
-            //     int status;
-            //     waitpid(pid, &status, WUNTRACED | WCONTINUED);
-            //     if(WIFEXITED(status)){
-            //         if(WEXITSTATUS(status) == 0){
-            //             return true;
-            //         }
-            //         else{
-            //             return false;
-            //         }
-            //     }
-            // }
             
+            char file[100];
+			strcpy(file, second->retName().c_str());
+            int pFile;
+			if((pFile = open(file, O_RDONLY )) == -1) {
+				perror("Input Redirection Error: Could not open file");
+				return false;
+			}
+			
+			int saveSTDin = dup(0);
+			dup2(pFile, 0);
+			first->execute();
+			dup2(saveSTDin, 0);
             return true;
         }
+        string retName(){
+            return "";
+        }
 };
-
-
 
 class Append: public Connector{
     //takes output from (left) and appends to file on (right)
     public: 
-        Append() : Connector() {};
+        Append() : Connector(){};
         bool execute(){
+            // string fileName = "example.txt";
+            char file[100];
+            strcpy(file, second->retName().c_str());
+            int pFile;
+            if((pFile = open(file, O_RDWR | O_APPEND | O_CREAT , S_IRUSR | S_IWUSR | S_IROTH | S_IRGRP )) == -1){
+    				perror("Append Error: Could not open file");
+    				return false;
+    				// return false; ??? instead
+    		}
+            int saveStdout = dup(1);
+            dup2(pFile, 1);
+            first->execute();
+            dup2(saveStdout, 1);
             
             return true;
+        }
+        string retName(){
+            return "";
         }
 };
 
@@ -250,8 +266,28 @@ class Pipe: public Connector{
     public: 
         Pipe() : Connector() {};
         bool execute(){
-
+            //create a pipe
+            int fd[2];
+            pipe(fd);
+            //set std out to pipe in
+            int saveStdout = dup(1);
+            dup2(fd[1], 1);
+            //execute first
+            first->execute();
+            close(fd[1]);
+            int saveStdin = dup(0);
+            //set std in to pipe out
+            dup2(fd[0], 0);
+            //reset std out to normal
+            dup2(saveStdout, 1);
+            //execute second
+            second->execute();
+            close(fd[0]);
+            dup2(saveStdin, 0);
             return true;
+        }
+        string retName(){
+            return "";
         }
 };
 
@@ -261,10 +297,15 @@ class Command : public Shell{
         vector<string> args;
         Command() : Shell(){};
         Command(string c, vector<string> a) : Shell(), cmd(c), args(a) {};
+        string retName(){
+            return cmd;
+        }
         bool execute(){
+            //cout << "cmd: " << cmd << endl;
             if(cmd == "exit"){
                 exit(0);
             }
+            
             string flag;
             string directory;
             if(cmd.at(0) == '[' || cmd == "test"){
@@ -350,7 +391,7 @@ class Command : public Shell{
                 // ;
             }
             return false;
-    }
+        }
 };
 
 Shell* stringToCommand(string commandLine){
@@ -383,7 +424,6 @@ Shell* parse(string commandLine){
         //stack
         //bool closed = true;
         // checks for parenthesis & adjusts stack
-        
         if(commandLine.at(i) == ';' /* && closed == true */){
             //make substr
             temp = commandLine.substr(0, i); // didn't include actual character
@@ -396,12 +436,12 @@ Shell* parse(string commandLine){
                 Shell* connect = new Semi;
                 top = connect;
                 //Shell* 
-                connect->first = stringToCommand(temp);
+                connect->first = parse(temp);
             }
             else{
                 Shell* connect = new Semi;
                 connect->first = top;
-                top->second = stringToCommand(temp);
+                top->second = parse(temp);
                 top = connect;
             }
         }
@@ -416,15 +456,35 @@ Shell* parse(string commandLine){
                 if(top == NULL){
                     Shell* connect = new Bars;
                     top = connect;
-                    connect->first = stringToCommand(temp);
+                    connect->first = parse(temp);
                 }
                 else{
                     Shell* connect = new Bars;
                     connect->first = top;
-                    top->second = stringToCommand(temp);
+                    top->second = parse(temp);
                     top = connect;
                 }
             }
+            else{
+            //make substr
+            temp = commandLine.substr(0, i); // didn't include actual character
+            //delete what we took
+            commandLine.erase(0, i + 1);
+            // reset i
+            i = 0;
+            //make pipe command
+            if(top == NULL){
+                Shell* connect = new Pipe;
+                top = connect;
+                connect->first = parse(temp);
+            }
+            else{
+                Shell* connect = new Pipe;
+                connect->first = top;
+                top->second = parse(temp);
+                top = connect;
+            }
+        }
         }
         else if(commandLine.at(i) == '&'){
             if(commandLine.at(i + 1) == '&'){
@@ -437,12 +497,12 @@ Shell* parse(string commandLine){
                 if(top == NULL){
                     Shell* connect = new Amp;
                     top = connect;
-                    connect->first = stringToCommand(temp);
+                    connect->first = parse(temp);
                 }
                 else{
                     Shell* connect = new Amp;
                     connect->first = top;
-                    top->second = stringToCommand(temp);
+                    top->second = parse(temp);
                     top = connect;
                 }
             }
@@ -486,15 +546,26 @@ Shell* parse(string commandLine){
                 temp = commandLine.substr(0, i);
                 //delete what we took
                 commandLine.erase(0, i + 2);//make redir command
+                // // get file name
+                // stringstream ss (commandLine);
+                // string redirFile;
+                // ss >> redirFile;
+                // commandLine = ss.str();
+                i = 0;
                 if(top == NULL){
-                    Shell* connect = new Redir;
+                    Shell* connect = new Append;
                     top = connect;
                     connect->first = parse(temp);
                 }
                 else{
-                    Shell* connect = new Redir;
-                    connect->first = parse(temp);
-                    top->second = connect;
+                    // Shell* connect = new Append;
+                    // connect->first = stringToCommand(temp);
+                    // top->second = connect;
+                    
+                    Shell* connect = new Append;
+                    connect->first = top;
+                    top->second = parse(temp);
+                    top = connect;
                 }
             }
             else{
@@ -502,34 +573,24 @@ Shell* parse(string commandLine){
                 temp = commandLine.substr(0, i); // didn't include actual character
                 //delete what we took
                 commandLine.erase(0, i + 1);
+                // get file name
+                stringstream ss (commandLine);
+                string redirFile;
+                ss >> redirFile;
+                commandLine = ss.str();
+                i = 0;
                 //make append command
                 if(top == NULL){
-                    Shell* connect = new Append;
+                    Shell* connect = new Redir;
                     top = connect;
                     connect->first = parse(temp);
                 }
                 else{
-                    Shell* connect = new Append;
-                    connect->first = parse(temp);
-                    top->second = connect;
+                    Shell* connect = new Redir;
+                    connect->first = top;
+                    top->second = parse(temp);
+                    top = connect;
                 }
-            }
-        }
-        else if(commandLine.at(i) == '|'){
-            //make substr
-            temp = commandLine.substr(0, i); // didn't include actual character
-            //delete what we took
-            commandLine.erase(0, i + 1);
-            //make pipe command
-            if(top == NULL){
-                Shell* connect = new Pipe;
-                top = connect;
-                connect->first = parse(temp);
-            }
-            else{
-                Shell* connect = new Pipe;
-                connect->first = parse(temp);
-                top->second = connect;
             }
         }
         else if(commandLine.at(i) == '<'){
@@ -537,6 +598,8 @@ Shell* parse(string commandLine){
             temp = commandLine.substr(0, i); // didn't include actual character
             //delete what we took
             commandLine.erase(0, i + 1);
+            // reset i
+            i = 0;
             //make input command
             if(top == NULL){
                 Shell* connect = new Input;
@@ -544,9 +607,14 @@ Shell* parse(string commandLine){
                 connect->first = parse(temp);
             }
             else{
+                // Shell* connect = new Input;
+                // connect->first = parse(temp);
+                // top->second = connect;
+            
                 Shell* connect = new Input;
-                connect->first = parse(temp);
-                top->second = connect;
+                connect->first = top;
+                top->second = parse(temp);
+                top = connect;
             }
         }
     }
@@ -580,9 +648,8 @@ int main() {
     string commandLine;
     string prompt;
     getUser(prompt);
-    prompt = prompt + '$';
-    while(getline(cin, commandLine) && commandLine != "exit"){
-        cout << prompt;
+    prompt = prompt + "$";
+    while(cout << prompt && getline(cin, commandLine) && commandLine != "exit"){
         Shell* tree = parse(commandLine);
         tree->execute();
     }
